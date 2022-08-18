@@ -6,36 +6,39 @@ const boardEl = document.querySelector('#board');
 
 const welcomScreen = screens[0];
 const gameScreen = screens[1];
-const resultScreen = screens[2];
-const colorList = ['#d9303b', '#cc239c', '#2c3fe8', '#2cc6e8', '#2ce89a', '#2cb02a', '#cce339', '#e3be39', '#e37739',  '#e34d39'];
+const colorList = [
+  '#d9303b',
+  '#cc239c',
+  '#2c3fe8',
+  '#2cc6e8',
+  '#2ce89a',
+  '#2cb02a',
+  '#cce339',
+  '#e3be39',
+  '#e37739',
+  '#e34d39',
+];
 
 let timeRemains = null;
 let score = 0;
 
+function setTime(value) {
+  timeLeftEl.textContent = `00:${value}`;
+}
+function finishGame() {
+  timeLeftEl.parentNode.classList.add('hide');
+  boardEl.innerHTML = `<h1>Score: <span class="primary">${score}</span></h1>`;
+}
+
 function decrementTime() {
-  let currentTime =  timeRemains -= 1;
+  let currentTime = --timeRemains;
   if (currentTime === 0) {
-    finishGame()
+    finishGame();
   }
   if (currentTime < 10) {
     currentTime = `0${currentTime}`;
   }
   setTime(currentTime);
-}
-
-function setTime(value) {
-  timeLeftEl.textContent = `00:${value}`;
-}
-
-function startGame() {
-  setInterval(decrementTime, 1000);
-  createRandomCircle();
-  setTime(timeRemains);
-}
-
-function finishGame() {
-  timeLeftEl.parentNode.classList.add('hide');
-  boardEl.innerHTML = `<h1>Score: <span class="primary">${score}</span></h1>`;
 }
 
 function getRandomNumber(min, max) {
@@ -45,7 +48,7 @@ function getRandomNumber(min, max) {
 function createRandomCircle() {
   const circle = document.createElement('div');
   const circleSize = getRandomNumber(5, 60);
-  const circleColor = colorList[getRandomNumber(0, 9)]
+  const circleColor = colorList[getRandomNumber(0, 9)];
 
   const { width, height } = boardEl.getBoundingClientRect();
   const x = getRandomNumber(0, width - circleSize);
@@ -56,9 +59,15 @@ function createRandomCircle() {
   circle.style.height = `${circleSize}px`;
   circle.style.left = `${x}px`;
   circle.style.top = `${y}px`;
-  circle.style.background = `${circleColor}`
+  circle.style.background = `${circleColor}`;
 
   boardEl.append(circle);
+}
+
+function startGame() {
+  setInterval(decrementTime, 1000);
+  createRandomCircle();
+  setTime(timeRemains);
 }
 
 boardEl.addEventListener('click', (e) => {
@@ -77,7 +86,7 @@ startBtn.addEventListener('click', (e) => {
 timeListEl.addEventListener('click', (e) => {
   const { target } = e;
   if (target.classList.contains('time-btn')) {
-    timeRemains = parseInt(target.getAttribute('data-time'));
+    timeRemains = parseInt(target.getAttribute('data-time'), 10);
     gameScreen.classList.add('up');
     startGame();
   }
